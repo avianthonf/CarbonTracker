@@ -13,13 +13,13 @@ import androidx.core.content.ContextCompat
 import java.util.Calendar
 
 // Module 2, Abb battery usage, Single app data struct
-data class AppStat(var appName: String, var appActivity: String, var appIcon: Drawable, var appHrs: Int, var appMins : Int, var appBatteryUsed: Double)
+data class AppStat(var appName: String, var appActivity: String, var appIcon: Drawable, var appHrs: Int, var appMins : Int)
 
 class UsageEngine(val context: Context) {
 
 
     // Module 2 tools
-    fun getAppStats(fromNDaysAgo: Int = -1) : MutableList<AppStat> // Requires UsageAccess Permission
+    fun getAppStats(fromNDaysAgo: Int = -1) : List<AppStat> // Requires UsageAccess Permission
     {
         var toReturn = mutableListOf<AppStat>()
 
@@ -36,7 +36,7 @@ class UsageEngine(val context: Context) {
                 UsageStatsManager.INTERVAL_DAILY,startTime, endTime)?: emptyList()
 
 
-            val pm = context.packageManager //Fort app icons
+            val pm = context.packageManager //For app icons
 
             for (i in usageStatsList)
             {
@@ -46,14 +46,17 @@ class UsageEngine(val context: Context) {
                     ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground) // fallback icon
                 }
 
+                var mins : Int = (i.totalTimeInForeground / (1000 * 60)).toInt()
+                val hrs : Int = (mins / 60).toInt()
+                mins %= 60
+
                 toReturn.add(
                     AppStat(
                         i.packageName.toString(),
                         i.packageName.toString(),
                         icon,
-                        1,
-                         1,
-                        20.5
+                        hrs,
+                        mins
                     )
                 )
             }
@@ -61,6 +64,6 @@ class UsageEngine(val context: Context) {
 
 
 
-        return  toReturn
+        return  toReturn.sortedByDescending { it.appMins + (it.appHrs * 60) }
     }
 }

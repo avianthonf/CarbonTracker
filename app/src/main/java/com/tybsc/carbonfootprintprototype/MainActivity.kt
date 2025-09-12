@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
 
         val engine = UsageEngine(this)
 
-        val data = engine.getAppStats(-1)
+        val data = engine.getAppStats(-1) // -1 -> From yesterday till today
 
         var count = 0
         val limit = data.size
