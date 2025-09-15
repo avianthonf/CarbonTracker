@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         fun updateViews()
         {
             if (count<limit) {
-                output.text = data[count].appName
+                output.text = data[count].appMahConsumed.toString()
                 iconIV.setImageDrawable(data[count].appIcon)
 
                 count += 1
