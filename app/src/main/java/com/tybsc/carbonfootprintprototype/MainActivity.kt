@@ -1,21 +1,23 @@
 package com.tybsc.carbonfootprintprototype
 
-import android.app.usage.UsageStatsManager
-import android.content.Context
-import android.content.Intent
-import android.os.Bundle
-import android.provider.Settings
+
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import kotlin.inc
-import kotlin.text.compareTo
-import kotlin.text.get
+import android.app.AppOpsManager
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.os.Bundle
+import android.os.Process   // <-- this one
+import android.provider.Settings
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 
 
 class MainActivity : AppCompatActivity() {
@@ -28,6 +30,11 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        // Ensure usage access - only requests if not granted
+        requestUsageAccessIfNeeded()
+
+        val intent = Intent(this, DisplayUsageGraph::class.java)
+        startActivity(intent)
 
 
 
@@ -69,5 +76,49 @@ class MainActivity : AppCompatActivity() {
 
 
 
+    override fun onResume() {
+        super.onResume()
+        // When user returns from settings re-check and act accordingly
+        if (hasUsageStatsPermission(this)) {
+            Toast.makeText(this, "Usage access granted", Toast.LENGTH_SHORT).show()
+            // proceed with functionality that needs usage stats
+        } else {
+            // still not granted (user cancelled or didn't enable). handle as needed
+        }
+    }
 
+    private fun requestUsageAccessIfNeeded() {
+        if (!hasUsageStatsPermission(this)) {
+            // Open the Usage access settings page so the user can grant permission
+            // Try to open the package-specific page first (better UX)
+            val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
+                // direct user to your app's page if supported
+                data = Uri.parse("package:$packageName")
+            }
+            // startActivityForResult is optional — you can just startActivity(intent)
+            startActivity(intent)
+            // If you prefer, use startActivityForResult(intent, REQUEST_USAGE_ACCESS)
+        } else {
+            // already granted — continue
+        }
+    }
+
+    private fun hasUsageStatsPermission(context: Context): Boolean {
+        val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+        val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // checkOpNoThrow is still fine for most versions; newer APIs also exist
+            appOps.checkOpNoThrow(
+                AppOpsManager.OPSTR_GET_USAGE_STATS,
+                Process.myUid(),
+                context.packageName
+            )
+        } else {
+            appOps.checkOpNoThrow(
+                AppOpsManager.OPSTR_GET_USAGE_STATS,
+                Process.myUid(),
+                context.packageName
+            )
+        }
+        return mode == AppOpsManager.MODE_ALLOWED
+    }
 }

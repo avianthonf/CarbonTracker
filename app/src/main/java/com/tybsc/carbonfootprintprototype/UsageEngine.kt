@@ -19,12 +19,14 @@ import kotlin.random.nextUInt
 
 // Module 2, Abb battery usage, Single app data struct
 data class AppStat(var appName: String, var appActivity: String, var appMahConsumed: Double, var appIcon: Drawable, var appHrs: Int, var appMins : Int)
+data class CallStat(var phoneNumber: String, var callerName: String = "UNKNOWN", var callMins: Int, var callMahConsumed: Double)
+
 
 class UsageEngine(val context: Context) {
 
 
     // Module 2 tools
-    fun getAppStats(fromNDaysAgo: Int = -1) : List<AppStat> // Requires UsageAccess Permission
+    fun getAppStats(startTime: Long, endTime: Long) : List<AppStat> // Requires UsageAccess Permission
     {
          val toReturn = mutableListOf<AppStat>()
 
@@ -32,11 +34,6 @@ class UsageEngine(val context: Context) {
 
         val usageStatsManager: UsageStatsManager? =
             getSystemService(context, UsageStatsManager::class.java)
-            val calendar = Calendar.getInstance()
-            val endTime = calendar.timeInMillis
-            calendar.add(Calendar.DAY_OF_YEAR, fromNDaysAgo)
-            val startTime = calendar.timeInMillis
-
             val usageStatsList: List<UsageStats> = usageStatsManager?.queryUsageStats(
                 UsageStatsManager.INTERVAL_DAILY,startTime, endTime)?: emptyList()
 
@@ -95,10 +92,45 @@ class UsageEngine(val context: Context) {
                     )
                 )
             }
-
-
-
-
         return  toReturn.sortedByDescending { it.appMins + (it.appHrs * 60) }
+    }
+
+    fun getAppStats(fromNDaysAgo: Int = -1) : List<AppStat>
+    {
+        val calendar = Calendar.getInstance()
+        val endTime = calendar.timeInMillis
+        calendar.add(Calendar.DAY_OF_YEAR, fromNDaysAgo)
+        val startTime = calendar.timeInMillis
+
+        return getAppStats(startTime, endTime)
+    }
+
+    fun mahToCarbonFootprint(
+        mAh: Double,
+        voltage: Double = 3.7,                // default: phone battery nominal voltage
+        carbonIntensity: Double = 700.0       // gCO2e per kWh (default: India avg.)
+    ): Double {
+        // Step 1: Convert mAh → Wh
+        val wh = (mAh / 1000.0) * voltage
+
+        // Step 2: Wh → kWh
+        val kWh = wh / 1000.0
+
+        // Step 3: kWh → gCO2e
+        return kWh * carbonIntensity
+    }
+
+    fun getCarbonFootprint(startTime: Long, endTime: Long) : Double
+    {
+        val usage = getAppStats(startTime, endTime)
+
+        var usedMah = 0.0
+
+        for (app in usage)
+        {
+            usedMah += app.appMahConsumed
+        }
+
+        return mahToCarbonFootprint(usedMah)
     }
 }
