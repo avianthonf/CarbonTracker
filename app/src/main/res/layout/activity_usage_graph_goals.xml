@@ -1,10 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".UsageGraphGoals">
+    android:id="@+id/main"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <!-- Input for goal -->
+    <EditText
+        android:id="@+id/goalInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Enter weekly goal (gCO₂e)"
+        android:inputType="number"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/saveButton"
+        android:layout_marginEnd="8dp"/>
+
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        app:layout_constraintTop_toTopOf="@id/goalInput"
+        app:layout_constraintBottom_toBottomOf="@id/goalInput"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Current goal display -->
+    <TextView
+        android:id="@+id/currentGoalText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Current Goal: --"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/goalInput"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Progress bar -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:progress="0"
+        android:progressTint="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/currentGoalText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <!-- Progress summary -->
+    <TextView
+        android:id="@+id/progressText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Progress: 0%"
+        android:textSize="14sp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/progressBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

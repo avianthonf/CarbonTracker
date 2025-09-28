@@ -18,8 +18,8 @@
 
     <TextView
         android:id="@+id/summaryText"
-        android:layout_width="354dp"
-        android:layout_height="137dp"
+        android:layout_width="359dp"
+        android:layout_height="64dp"
         android:layout_marginTop="20dp"
         android:gravity="center"
         android:textSize="16sp"
@@ -28,5 +28,79 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/barChart"
         tools:text="Weekly carbon footprint summary goes here" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="361dp"
+        android:layout_height="183dp"
+        android:layout_marginTop="24dp"
+        android:padding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/summaryText">
+
+        <!-- Input for goal -->
+        <EditText
+            android:id="@+id/goalInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:hint="Enter weekly goal (gCO₂e)"
+            android:inputType="number"
+            app:layout_constraintEnd_toStartOf="@+id/saveButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            app:layout_constraintBottom_toBottomOf="@id/goalInput"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/goalInput" />
+
+        <!-- Current goal display -->
+        <TextView
+            android:id="@+id/currentGoalText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="Current Goal: --"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/goalInput" />
+
+        <!-- Progress bar -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:max="100"
+            android:progress="0"
+            android:progressTint="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/currentGoalText" />
+
+        <!-- Progress summary -->
+        <TextView
+            android:id="@+id/progressText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="Progress: 0%"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/progressBar" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
